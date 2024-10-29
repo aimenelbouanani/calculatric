@@ -3,10 +3,16 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'  // Version de Spring Boot
     id 'io.spring.dependency-management' version '1.1.6'  // Version du gestionnaire de dépendances
     id 'jacoco'//Application du plugin JaCoCo
+    id 'checkstyle'
 }
 
 group = 'com.aimenelbouanani'  // Nom du groupe
 version = '0.0.1-SNAPSHOT'  // Version du projet
+
+checkstyle {
+    toolVersion = '10.4' // Remplacez par la version souhaitée
+    configFile = file('config/checkstyle/checkstyle.xml')
+}
 
 java {
     toolchain {
@@ -22,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'  // Dépendance pour Spring Web
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Dépendance pour les tests Spring
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'  // Dépendance pour JUnit 5
+    checkstyle 'com.puppycrawl.tools:checkstyle:10.4' 
 }
 
 tasks.named('test') {

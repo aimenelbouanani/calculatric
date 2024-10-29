@@ -26,7 +26,8 @@ pipeline {
                 // Vérification de la couverture du code
                 sh "./gradlew jacocoTestCoverageVerification"
             }
-         stage("Analyse statistique du code") {
+        }
+        stage("Analyse statistique du code") {
             steps {
                 sh "./gradlew checkstyleMain"
                 publishHTML(target: [
@@ -34,7 +35,7 @@ pipeline {
                     reportFiles: 'main.html',
                     reportName: "Checkstyle Report"
                 ])
-            }  
+            }
         }
     }
 }

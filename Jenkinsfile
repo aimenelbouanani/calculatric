@@ -1,46 +1,38 @@
 pipeline {
     agent any
 
-    triggers {
-        // Gardez cette section si vous souhaitez que Jenkins interroge périodiquement le dépôt.
-        pollSCM('* * * * *')
-    }
-
     stages {
+        
         stage("Compilation") {
             steps {
-                sh "./gradlew compileJava"
+                sh "./gradlew compileJava" 
             }
         }
-        stage("Test unitaire") {
-            steps {
+        stage("test unitaire"){
+            steps{
                 sh "./gradlew test"
             }
         }
-        stage("Code Coverage") {
+        stage("Couverture de code") {
             steps {
-                // Génération et publication du rapport JaCoCo
                 sh "./gradlew jacocoTestReport"
                 publishHTML(target: [
                     reportDir: 'build/reports/jacoco/test/html',
                     reportFiles: 'index.html',
-                    reportName: "JaCoCo Report"
+                    reportName: "Rapport JaCoCo"
                 ])
-                // Vérification de la couverture du code
                 sh "./gradlew jacocoTestCoverageVerification"
             }
         }
-        stage("Analyse statistique du code") {
-            steps {
-                // Génération et publication du rapport Checkstyle
-                sh "./gradlew checkstyleMain"
-                publishHTML(target: [
-                    reportDir: 'build/reports/checkstyle/',
-                    reportFiles: 'main.html',
-                    reportName: "Checkstyle Report"
-                ])
-            }
+        stage("Analyse statique du code") {
+      steps {
+           sh "./gradlew checkstyleMain"
+           publishHTML (target: [
+           reportDir: 'build/reports/checkstyle/',
+           reportFiles: 'main.html',
+           reportName: "Checkstyle Report"
+      ])
+           }
         }
     }
 }
-

@@ -1,0 +1,18 @@
+# Ignorer les dossiers de build et de cache générés par Gradle
+.gradle/
+build/
+
+# Ignorer les fichiers temporaires et de log
+*.log
+*.tmp
+*.lock
+
+# Ignorer les clés de sécurité si elles ne doivent pas être versionnées
+key
+key.pub
+
+# Ignorer les rapports de test et de couverture de code
+build/reports/
+build/test-results/
+build/reports/tests/
+build/reports/jacoco/

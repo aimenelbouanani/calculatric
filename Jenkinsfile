@@ -2,14 +2,13 @@ pipeline {
     agent any
 
     stages {
-        
         stage("Compilation") {
             steps {
                 sh "./gradlew compileJava" 
             }
         }
-        stage("test unitaire"){
-            steps{
+        stage("Test unitaire") {
+            steps {
                 sh "./gradlew test"
             }
         }
@@ -25,14 +24,15 @@ pipeline {
             }
         }
         stage("Analyse statique du code") {
-      steps {
-           sh "./gradlew checkstyleMain"
-           publishHTML (target: [
-           reportDir: 'build/reports/checkstyle/',
-           reportFiles: 'main.html',
-           reportName: "Checkstyle Report"
-      ])
-           }
+            steps {
+                sh "./gradlew checkstyleMain"
+                publishHTML(target: [
+                    reportDir: 'build/reports/checkstyle',
+                    reportFiles: 'main.html',
+                    reportName: "Checkstyle Report"
+                ])
+            }
         }
     }
 }
+

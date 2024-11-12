@@ -1,47 +1,74 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'  // Version de Spring Boot
-    id 'io.spring.dependency-management' version '1.1.6'  // Version du gestionnaire de dépendances
-    id 'jacoco'//Application du plugin JaCoCo
-    id 'checkstyle'
+    id 'io.spring.dependency-management' version '1.1.6'  // Gestionnaire de dépendances Spring
+    id 'jacoco'  // Plugin JaCoCo pour la couverture de code
+    id 'checkstyle'  // Plugin Checkstyle pour la vérification du code
 }
 
 group = 'com.aimenelbouanani'  // Nom du groupe
 version = '0.0.1-SNAPSHOT'  // Version du projet
 
+// Configuration de Checkstyle
 checkstyle {
-    toolVersion = '10.4' // Remplacez par la version souhaitée
+    toolVersion = '10.4'  // Version de Checkstyle
     configFile = file('config/checkstyle/checkstyle.xml')
 }
 
+// Configuration de Java avec la version 17
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)  // Version de Java à utiliser
+        languageVersion = JavaLanguageVersion.of(17)  // Version de Java
     }
 }
 
+// Dépôts Maven
 repositories {
     mavenCentral()  // Dépôt Maven central pour les dépendances
 }
 
+// Dépendances du projet
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'  // Dépendance pour Spring Web
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Dépendance pour les tests Spring
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'  // Dépendance pour JUnit 5
-    checkstyle 'com.puppycrawl.tools:checkstyle:10.4' 
+    checkstyle 'com.puppycrawl.tools:checkstyle:10.4'  // Dépendance Checkstyle
+
+    // Dépendances pour Cucumber (version compatible avec l'ancienne version de Gradle)
+    testImplementation 'io.cucumber:cucumber-java:6.10.4'
+    testImplementation 'io.cucumber:cucumber-junit:6.10.4'
+
+    // JUnit 4 pour la compatibilité avec des versions plus anciennes de Cucumber et Gradle
+    testImplementation 'junit:junit:4.13.1'
 }
 
+// Configuration de la tâche 'test' pour utiliser JUnit Platform (JUnit 5)
 tasks.named('test') {
-    useJUnitPlatform()  // Indique d'utiliser JUnit 5 pour les tests
+    useJUnitPlatform()  // Utilise JUnit 5 pour les tests
 }
 
+// Configuration pour vérifier la couverture de test avec JaCoCo
 jacocoTestCoverageVerification {
-violationRules {
-rule {
-limit {
-minimum = 0.2
-      }
-     }
-               }
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.2  // Seuil minimal de couverture de test
+            }
+        }
+    }
 }
+
+// Ajout de la tâche de vérification de la couverture de test au processus de build
 check.dependsOn jacocoTestCoverageVerification
+
+// Tâche personnalisée pour les tests d'acceptation
+tasks.register('acceptanceTest', Test) {
+    include '**/acceptance/**'  // Inclure uniquement les tests dans le dossier 'acceptance'
+    systemProperties System.getProperties()  // Passe toutes les propriétés système à la tâche de test
+}
+
+// Configuration de la tâche 'test' si nécessaire
+test {
+    // Ajoutez toute configuration de test supplémentaire ici, si nécessaire
+}
+

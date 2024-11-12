@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.aimenelbouanani.calculatric.CalculatorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-08T23:15:36" hostname="ubuntu" time="0.064">
+<testsuite name="com.aimenelbouanani.calculatric.CalculatorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-11T13:49:18" hostname="ubuntu" time="0.533">
   <properties/>
-  <testcase name="testSum()" classname="com.aimenelbouanani.calculatric.CalculatorTest" time="0.064"/>
+  <testcase name="testSum()" classname="com.aimenelbouanani.calculatric.CalculatorTest" time="0.533"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -43,12 +43,14 @@ pipeline {
         }
         stage('Docker build') {
             steps {
-                sh "docker build -t localhost:5000/calculatric ."
+                // Mise à jour du port du registre Docker
+                sh "docker build -t localhost:32780/calculatric ."
             }
         }
         stage('Docker push') {
             steps {
-                sh "docker push localhost:5000/calculatric"
+                // Mise à jour du port du registre Docker
+                sh "docker push localhost:32780/calculatric"
             }
         }
         stage('Déploiement sur staging') {

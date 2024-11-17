@@ -18,7 +18,7 @@ pipeline {
                     #!/bin/bash
                     docker stop calculatric || true
                     docker rm calculatric || true
-                    docker run -d --name calculatric -p 9091:9090 ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+                    docker run -d --name calculatric -p 9092:9090 ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
                 """
             }
         }
@@ -28,7 +28,7 @@ pipeline {
             }
             steps {
                 echo "Exécution des tests d'acceptation."
-                sh './gradlew acceptanceTest -Dcalculatric.url=http://localhost:9091'
+                sh './gradlew acceptanceTest -Dcalculatric.url=http://localhost:9092'
             }
         }
     }

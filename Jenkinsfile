@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_REGISTRY = "localhost:5001" // Correspond au registre actuel (modifié)
+        DOCKER_REGISTRY = "localhost:5001" // Correspond au registre actuel
         IMAGE_NAME = "calculatric"
         IMAGE_TAG = "latest"
     }
@@ -77,12 +77,20 @@ pipeline {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo "Déploiement de l'application en cours sur l'environnement de staging."
-                sh """
-                    docker stop calculatric || true
-                    docker rm calculatric || true
-                    docker run -d --name calculatric -p 9090:9090 ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                script {
+                    echo "Déploiement de l'application en cours sur l'environnement de staging."
+                    def freePort = sh(script: """
+                        comm -23 <(seq 9000 9100) <(ss -tan | awk '{print \$4}' | grep -o '[0-9]*\$' | sort -n) | head -n 1
+                    """, returnStdout: true).trim()
+                    
+                    sh """
+                        docker stop calculatric || true
+                        docker rm calculatric || true
+                        docker run -d --name calculatric -p ${freePort}:9090 ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                    env.STAGING_PORT = freePort
+                    echo "Application déployée sur le port dynamique ${STAGING_PORT}."
+                }
             }
         }
         stage('Test d\'acceptation') {
@@ -91,7 +99,7 @@ pipeline {
             }
             steps {
                 echo "Exécution des tests d'acceptation."
-                sh './gradlew acceptanceTest -Dcalculatric.url=http://localhost:9090' // Port et URL vérifiés
+                sh "./gradlew acceptanceTest -Dcalculatric.url=http://localhost:${STAGING_PORT}"
             }
         }
     }

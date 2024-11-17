@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_REGISTRY = "localhost:5001" // Correspond au registre actuel
+        DOCKER_REGISTRY = "localhost:5001"
         IMAGE_NAME = "calculatric"
         IMAGE_TAG = "latest"
     }
@@ -77,20 +77,14 @@ pipeline {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                script {
-                    echo "Déploiement de l'application en cours sur l'environnement de staging."
-                    def freePort = sh(script: """
-                        comm -23 <(seq 9000 9100) <(ss -tan | awk '{print \$4}' | grep -o '[0-9]*\$' | sort -n) | head -n 1
-                    """, returnStdout: true).trim()
-                    
-                    sh """
-                        docker stop calculatric || true
-                        docker rm calculatric || true
-                        docker run -d --name calculatric -p ${freePort}:9090 ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
-                    """
-                    env.STAGING_PORT = freePort
-                    echo "Application déployée sur le port dynamique ${STAGING_PORT}."
-                }
+                echo "Déploiement de l'application en cours sur l'environnement de staging."
+                // Utiliser bash pour éviter des erreurs liées aux parenthèses ou caractères spéciaux
+                sh """
+                    #!/bin/bash
+                    docker stop calculatric || true
+                    docker rm calculatric || true
+                    docker run -d --name calculatric -p 9090:9090 ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+                """
             }
         }
         stage('Test d\'acceptation') {
@@ -99,7 +93,7 @@ pipeline {
             }
             steps {
                 echo "Exécution des tests d'acceptation."
-                sh "./gradlew acceptanceTest -Dcalculatric.url=http://localhost:${STAGING_PORT}"
+                sh './gradlew acceptanceTest -Dcalculatric.url=http://localhost:9090'
             }
         }
     }
